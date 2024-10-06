@@ -1,0 +1,97 @@
+Debugger listening on ws://127.0.0.1:57328/c9c2c560-7510-4428-a237-49bfcfe574b2
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger attached.
+
+> frontend@0.1.0 build
+> next build
+
+Debugger listening on ws://127.0.0.1:57332/1f51f746-06b0-412f-86e2-acf0358ccabe
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger attached.
+  ▲ Next.js 14.2.11
+
+   Creating an optimized production build ...
+Debugger listening on ws://127.0.0.1:57337/7a3f617d-8e89-4632-8550-cf0e472d70f9
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger attached.
+Waiting for the debugger to disconnect...
+Debugger listening on ws://127.0.0.1:57342/5f0387cd-45ca-41ed-8f00-04f3aa6cc9d2
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger attached.
+Waiting for the debugger to disconnect...
+Debugger listening on ws://127.0.0.1:57344/1dc7136f-bcf0-4459-a77c-4a749e5854c9
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger attached.
+Waiting for the debugger to disconnect...
+ ✓ Compiled successfully
+   Skipping validation of types
+   Skipping linting
+Debugger listening on ws://127.0.0.1:57347/20e39d55-294d-4e78-b2cc-bf4e4d7ed222
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger attached.
+   Collecting page data ...
+Waiting for the debugger to disconnect...
+Debugger listening on ws://127.0.0.1:57350/dd6a4cc1-cc55-43c0-b7df-773c93d5af45
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger listening on ws://127.0.0.1:57351/6873f30c-7cf8-4eb7-a9b3-869aa9a30a17
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger listening on ws://127.0.0.1:57349/0ac74290-bf26-48a0-a35a-8ac33ae82cd8
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger listening on ws://127.0.0.1:57352/7433a1c6-efc0-4e7e-8e8c-96089d1de0e5
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger listening on ws://127.0.0.1:57353/b034ed6a-17ca-4941-a54c-9f5742e8e16b
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger listening on ws://127.0.0.1:57354/bdb6b08b-9c6f-4d5e-8584-928944c211a8
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger listening on ws://127.0.0.1:57355/a1583f4b-bfe5-4ee8-93f8-94b428fcaabc
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger listening on ws://127.0.0.1:57356/71639a9c-72f4-425d-a9fb-c3fb6df9f469
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger attached.
+Debugger listening on ws://127.0.0.1:57358/63310f4c-e40c-4c89-bbe7-55f81497beac
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger listening on ws://127.0.0.1:57359/24d3f3a1-a095-4e64-993f-21afa3af4276
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger listening on ws://127.0.0.1:57360/69521855-a457-4c06-9cf7-12b82e7fb207
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger listening on ws://127.0.0.1:57361/5ff00852-17de-4153-9d06-24359f922c0a
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger listening on ws://127.0.0.1:57362/79dd6d9c-ba26-4b26-8c0a-587aa8e8521f
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger attached.
+Debugger listening on ws://127.0.0.1:57364/f08ea012-5728-49a0-9470-0b36f6d67d8a
+For help, see: https://nodejs.org/en/docs/inspector
+Debugger attached.
+Debugger attached.
+Debugger attached.
+Debugger attached.
+Debugger attached.
+Debugger attached.
+Debugger attached.
+Debugger attached.
+Debugger attached.
+Debugger attached.
+Debugger attached.
+Debugger attached.
+   Generating static pages (0/6) ...
+   Generating static pages (1/6) 
+   Generating static pages (2/6) 
+   Generating static pages (4/6) 
+ ✓ Generating static pages (6/6)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+┌ ○ /                                    2.45 kB        97.4 kB
+├ ○ /_not-found                          871 B          87.9 kB
+└ ○ /generate-audio                      2.63 kB        97.5 kB
++ First Load JS shared by all            87.1 kB
+  ├ chunks/23-df0b07fe983cd01a.js        31.6 kB
+  ├ chunks/fd9d1056-1b2bda42f2b204ed.js  53.6 kB
+  └ other shared chunks (total)          1.86 kB
+
+
+○  (Static)  prerendered as static content
+
+Waiting for the debugger to disconnect...
+Waiting for the debugger to disconnect...
