@@ -3,10 +3,11 @@ import { useState } from 'react'
 import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { Textarea } from "./ui/textarea"
-import { Wand2, Upload, Play, Download, Loader2 } from 'lucide-react'
+import { Wand2, Upload, Play, Download, Loader2, Link } from 'lucide-react'
 
 export default function GenerateAudioPage() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null)
+  const [youtubeUrl, setYoutubeUrl] = useState('')
   const [customText, setCustomText] = useState('')
   const [generatedAudioUrl, setGeneratedAudioUrl] = useState<string | null>(null)
   const [isGenerating, setIsGenerating] = useState(false)
@@ -15,6 +16,12 @@ export default function GenerateAudioPage() {
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0] || null
     setUploadedFile(file)
+    setYoutubeUrl('') // Clear YouTube URL when file is uploaded
+  }
+
+  const handleYoutubeUrlChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setYoutubeUrl(event.target.value)
+    setUploadedFile(null) // Clear uploaded file when YouTube URL is entered
   }
 
   const handleTextChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -22,14 +29,8 @@ export default function GenerateAudioPage() {
   }
 
   const handleGenerate = async () => {
-    if (!uploadedFile || !customText) {
-      setError("Please upload a file and enter custom text.")
-      return
-    }
-
-    // Check if the file still exists and is accessible
-    if (!(uploadedFile instanceof File) || uploadedFile.size === 0) {
-      setError("The selected file is no longer available. Please select the file again.")
+    if ((!uploadedFile && !youtubeUrl) || !customText) {
+      setError("Please upload a file or enter a YouTube URL, and enter custom text.")
       return
     }
 
@@ -37,12 +38,19 @@ export default function GenerateAudioPage() {
     setError(null)
 
     const formData = new FormData()
-    formData.append('file', uploadedFile)
     formData.append('text', customText)
 
+    let url = 'https://89c7-122-161-52-125.ngrok-free.app/process_audio/'
+    if (youtubeUrl) {
+      url = 'https://89c7-122-161-52-125.ngrok-free.app/process_youtube_audio/'
+      formData.append('url', youtubeUrl)
+    } else if (uploadedFile) {
+      formData.append('file', uploadedFile)
+    }
+
     try {
-      console.log('Sending request to:', 'https://89c7-122-161-52-125.ngrok-free.app/process_audio/')
-      const response = await fetch('https://89c7-122-161-52-125.ngrok-free.app/process_audio/', {
+      console.log('Sending request to:', url)
+      const response = await fetch(url, {
         method: 'POST',
         body: formData,
       })
@@ -64,9 +72,9 @@ export default function GenerateAudioPage() {
         throw new Error(`Unexpected content type: ${blob.type}`);
       }
 
-      const url = URL.createObjectURL(blob)
-      setGeneratedAudioUrl(url)
-      console.log('Generated audio URL:', url)
+      const audioUrl = URL.createObjectURL(blob)
+      setGeneratedAudioUrl(audioUrl)
+      console.log('Generated audio URL:', audioUrl)
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       console.error('Error generating audio:', errorMessage);
@@ -105,13 +113,14 @@ export default function GenerateAudioPage() {
 
         <div className="max-w-2xl mx-auto space-y-8">
           <div className="space-y-4">
-            <h2 className="text-2xl font-semibold text-purple-600">1. Upload Your Voice</h2>
+            <h2 className="text-2xl font-semibold text-purple-600">1. Upload Your Voice or Enter YouTube URL</h2>
             <div className="flex items-center space-x-4">
               <Input
                 type="file"
                 accept="audio/*,video/*"
                 onChange={handleFileUpload}
                 className="flex-grow text-black bg-white"
+                disabled={!!youtubeUrl}
               />
               <Button variant="outline" className="flex items-center space-x-2 text-purple-400">
                 <Upload className="h-4 w-4 text-purple-400" />
@@ -123,6 +132,20 @@ export default function GenerateAudioPage() {
                 Uploaded: {uploadedFile.name}
               </p>
             )}
+            <div className="flex items-center space-x-4 mt-4">
+              <Input
+                type="text"
+                placeholder="Enter YouTube URL"
+                value={youtubeUrl}
+                onChange={handleYoutubeUrlChange}
+                className="flex-grow text-black bg-white"
+                disabled={!!uploadedFile}
+              />
+              <Button variant="outline" className="flex items-center space-x-2 text-purple-400">
+                <Link className="h-4 w-4 text-purple-400" />
+                <span>YouTube</span>
+              </Button>
+            </div>
           </div>
 
           <div className="space-y-4">
@@ -138,7 +161,7 @@ export default function GenerateAudioPage() {
           <Button
             onClick={handleGenerate}
             className="w-full bg-purple-600 hover:bg-purple-700 text-white"
-            disabled={!uploadedFile || !customText || isGenerating}
+            disabled={(!uploadedFile && !youtubeUrl) || !customText || isGenerating}
           >
             {isGenerating ? (
               <>
