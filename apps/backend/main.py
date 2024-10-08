@@ -10,6 +10,7 @@ import logging
 from fastapi.middleware.cors import CORSMiddleware
 import boto3
 from botocore.exceptions import NoCredentialsError
+import yt_dlp
 
 load_dotenv(dotenv_path=".env")
 
@@ -196,3 +197,59 @@ async def text_to_speech(voice_id: str, text: str):
     except Exception as e:
         logger.error("Error generating speech: %s", e)
         return JSONResponse(content={"message": f"Error generating speech: {e}"}, status_code=500)
+        return JSONResponse(content={"message": f"Error generating speech: {e}"}, status_code=500)
+
+def download_youtube_video(url: str) -> str:
+    ydl_opts = {
+        'format': 'bestaudio/best',
+        'postprocessors': [{
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'mp3',
+            'preferredquality': '192',
+        }],
+        'outtmpl': 'input_audio.%(ext)s'
+    }
+    
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        ydl.download([url])
+    
+    return "input_audio.mp3"
+
+@app.post("/process_youtube_audio/")
+async def process_youtube_audio(url: str = Form(...), text: str = Form(...)):
+    try:
+        logger.info(f"Received YouTube URL: {url}")
+        
+        # Step 1: Download the YouTube video and extract audio
+        output_file = download_youtube_video(url)
+        
+        logger.info(f"YouTube audio downloaded successfully: {output_file}")
+        
+        # Upload to S3
+        s3_file_name = f"audio_files/{os.path.basename(output_file)}"
+        presigned_url = upload_to_s3(output_file, s3_file_name)
+        
+        if not presigned_url:
+            return JSONResponse(content={"message": "Failed to upload file to S3."}, status_code=500)
+        
+        # Step 2: Transcribe the audio with diarization
+        transcription_result = await transcribe_audio()
+        
+        # Step 3: Extract speaker segments
+        speaker_segments = await extract_speaker_segments()
+        
+        # Step 4: Generate speech from custom text using the first speaker
+        if speaker_segments:
+            first_speaker = min(speaker_segments.keys())
+            generated_speech = await generate_speech_from_speaker(first_speaker, text)
+            return JSONResponse(content={
+                "message": "YouTube audio processed successfully",
+                "presigned_url": presigned_url,
+                "generated_speech": generated_speech
+            }, status_code=200)
+        else:
+            return JSONResponse(content={"message": "No speakers detected in the audio."}, status_code=400)
+        
+    except Exception as e:
+        logger.error(f"Error processing YouTube audio: {e}")
+        return JSONResponse(content={"message": f"Error processing YouTube audio: {e}"}, status_code=500)
