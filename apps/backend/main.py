@@ -128,22 +128,42 @@ async def extract_speaker_segments():
     try:
         with open("output.json", 'r') as file:
             data = json.load(file)
+        
         audio = AudioSegment.from_mp3("input_audio.mp3")
-        speaker_segments = {}
+        
+        speaker_0_segments = []
+        total_duration = 0
+        target_duration = 30 * 1000  # 30 seconds in milliseconds
+        
         for word_data in data['results']['channels'][0]['alternatives'][0]['words']:
-            speaker = word_data['speaker']
-            start_time = word_data['start'] * 1000
-            end_time = word_data['end'] * 1000
-            segment = audio[start_time:end_time]
-            if speaker in speaker_segments:
-                speaker_segments[speaker] += segment
-            else:
-                speaker_segments[speaker] = segment
-        for speaker, segment in speaker_segments.items():
-            segment.export(f"speaker_{speaker}.mp3", format="mp3")
-        return speaker_segments  # <- Return the actual dictionary here
+            if word_data['speaker'] == '0':  # Focus on speaker 0
+                start_time = int(float(word_data['start']) * 1000)
+                end_time = int(float(word_data['end']) * 1000)
+                segment = audio[start_time:end_time]
+                speaker_0_segments.append(segment)
+                total_duration += segment.duration_seconds * 1000
+                
+                if total_duration >= target_duration:
+                    break
+        
+        if speaker_0_segments:
+            combined_segment = sum(speaker_0_segments, AudioSegment.empty())
+            
+            # Trim to exactly 30 seconds if it's longer
+            if combined_segment.duration_seconds > 30:
+                combined_segment = combined_segment[:30000]
+            
+            output_file = "speaker_0_sample.mp3"
+            combined_segment.export(output_file, format="mp3")
+            
+            logger.info(f"Extracted {combined_segment.duration_seconds:.2f} seconds of audio for speaker 0")
+            return {"file": output_file, "duration": combined_segment.duration_seconds}
+        else:
+            logger.warning("No audio segments found for speaker 0")
+            return JSONResponse(content={"message": "No audio segments found for speaker 0"}, status_code=404)
+    
     except Exception as e:
-        logger.error("Error extracting speaker segments: %s", e)
+        logger.error(f"Error extracting speaker segments: {e}")
         return JSONResponse(content={"message": f"Error extracting speaker segments: {e}"}, status_code=500)
 
 @app.post("/generate_speech_from_speaker/")
